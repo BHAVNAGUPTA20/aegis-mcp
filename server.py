@@ -252,23 +252,23 @@ async def quick_risk(spo2: int):
 # -------------------------------------------------
 # HTTP APP
 # -------------------------------------------------
-api_app = FastAPI()
+from fastapi import FastAPI
 
-@api_app.get("/")
+app = FastAPI()
+
+@app.get("/")
 async def root():
-    return {"status": "healthy", "service": "Aegis MCP Server"}
+    return {
+        "status": "healthy",
+        "service": "Aegis MCP Server"
+    }
 
-mcp_app = mcp.http_app(path="/mcp")
+# create MCP sub-app
+mcp_app = mcp.http_app(path="/")
 
-app = FastAPI(
-    title="Aegis MCP Server",
-    routes=[*mcp_app.routes, *api_app.routes],
-    lifespan=mcp_app.lifespan,
-)
+# mount at /mcp
+app.mount("/mcp", mcp_app)
 
-# -------------------------------------------------
-# RUN SERVER
-# -------------------------------------------------
 if __name__ == "__main__":
     import os
 
@@ -276,4 +276,5 @@ if __name__ == "__main__":
         app,
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8000))
+    )
     )
