@@ -251,6 +251,13 @@ async def quick_risk(spo2: int):
 # -------------------------------------------------
 # HTTP APP
 # -------------------------------------------------
+from fastapi import FastAPI
+
+health_app = FastAPI()
+
+@health_app.get("/")
+async def health():
+    return {"status": "healthy"}
 app = mcp.http_app(path="/mcp")
 
 
