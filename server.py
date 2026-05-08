@@ -252,18 +252,21 @@ async def quick_risk(spo2: int):
 # HTTP APP
 # -------------------------------------------------
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
-health_app = FastAPI()
+app = FastAPI()
 
-@health_app.get("/")
-async def health():
-    return {"status": "healthy"}
-mcp_app = mcp.http_app(path="/mcp")
+mcp_app = mcp.http_app(path="/")
 
-health_app.mount("/mcp", mcp_app)
+app.mount("/mcp", mcp_app)
 
-app = health_app
 
+@app.get("/")
+async def root():
+    return JSONResponse({
+        "status": "healthy",
+        "service": "Aegis MCP Server"
+    })
 
 # -------------------------------------------------
 # RUN SERVER
