@@ -258,7 +258,11 @@ health_app = FastAPI()
 @health_app.get("/")
 async def health():
     return {"status": "healthy"}
-app = mcp.http_app(path="/mcp")
+mcp_app = mcp.http_app(path="/mcp")
+
+health_app.mount("/mcp", mcp_app)
+
+app = health_app
 
 
 # -------------------------------------------------
