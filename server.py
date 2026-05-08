@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 from fastmcp import FastMCP
 import uvicorn
 import asyncio
@@ -251,22 +252,19 @@ async def quick_risk(spo2: int):
 # -------------------------------------------------
 # HTTP APP
 # -------------------------------------------------
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+api_app = FastAPI()
 
-app = FastAPI()
-
-mcp_app = mcp.http_app(path="/")
-
-app.mount("/mcp", mcp_app)
-
-
-@app.get("/")
+@api_app.get("/")
 async def root():
-    return JSONResponse({
-        "status": "healthy",
-        "service": "Aegis MCP Server"
-    })
+    return {"status": "healthy", "service": "Aegis MCP Server"}
+
+mcp_app = mcp.http_app(path="/mcp")
+
+app = FastAPI(
+    title="Aegis MCP Server",
+    routes=[*mcp_app.routes, *api_app.routes],
+    lifespan=mcp_app.lifespan,
+)
 
 # -------------------------------------------------
 # RUN SERVER
