@@ -1,3 +1,3 @@
 fastapi
-uvicorn
-fastmcp
+uvicorn[standard]
+pydantic

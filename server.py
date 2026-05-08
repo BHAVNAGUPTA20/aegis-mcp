@@ -8,7 +8,13 @@ import os
 # APP
 # -------------------------------------------------
 app = FastAPI(title="Aegis Anesthesia Risk App", version="1.0.0")
-
+if __name__ == "__main__":
+    import os
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080))
+    )
 
 # -------------------------------------------------
 # REQUEST MODEL
@@ -563,5 +569,9 @@ async def quick_risk(spo2: int):
 # RUN SERVER
 # -------------------------------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    uvicorn.run("server:app", host="0.0.0.0", port=port)
+    import os
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8080))
+    )
