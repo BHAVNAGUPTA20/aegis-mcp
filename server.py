@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastmcp import FastMCP
 import uvicorn
 import asyncio
+import os
 
 # -------------------------------------------------
 # MCP Server
@@ -22,7 +23,6 @@ def generate_assessment(
     airway_grade: int,
     surgery_type: str
 ):
-
     risk_score = 0
     findings = []
     alerts = []
@@ -187,7 +187,6 @@ async def assess_preop_risk(
     """
     Advanced perioperative anesthesia risk assessment tool.
     """
-
     # ---------------------------------------------
     # VALIDATION
     # ---------------------------------------------
@@ -228,7 +227,6 @@ async def quick_risk(spo2: int):
     """
     Rapid oxygenation risk screening tool.
     """
-
     await asyncio.sleep(0.02)
 
     if spo2 < 90:
@@ -252,9 +250,8 @@ async def quick_risk(spo2: int):
 # -------------------------------------------------
 # HTTP APP
 # -------------------------------------------------
-from fastapi import FastAPI
+app = FastAPI(title="Aegis MCP Server")
 
-app = FastAPI()
 
 @app.get("/")
 async def root():
@@ -263,18 +260,18 @@ async def root():
         "service": "Aegis MCP Server"
     }
 
-# create MCP sub-app
-mcp_app = mcp.http_app(path="/")
 
-# mount at /mcp
+# Create MCP sub-app and mount it under /mcp
+mcp_app = mcp.http_app(path="/")
 app.mount("/mcp", mcp_app)
 
-if __name__ == "__main__":
-    import os
 
+# -------------------------------------------------
+# RUN SERVER
+# -------------------------------------------------
+if __name__ == "__main__":
     uvicorn.run(
         app,
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8000))
-    )
     )
